@@ -9,6 +9,7 @@ from langchain.schema import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
 from langchain.vectorstores import FAISS
 from langchain_community.llms import HuggingFaceHub
+import re
 
 app = Flask(__name__)
 
@@ -56,7 +57,7 @@ def chat_with_rag(message):
         | prompt
         | model
         | StrOutputParser()
-    )
+    )    
     
     return chain.invoke(message)
 
@@ -69,7 +70,19 @@ def home():
 def chat():
     user_message = request.form['user_input']
     bot_message = chat_with_rag(user_message)
-    return {'response': bot_message}
+    # Define the regex pattern to extract the answer
+    pattern = r"Answer:\s*(.*)"
+    # Search for the pattern in the text
+    match = re.search(pattern, bot_message, re.DOTALL)
+
+    if match:
+        answer = match.group(1).strip()
+        print("Extracted Answer:", answer)
+        return {'response': answer}
+    else:
+        print("Answer not found")
+    
+        return {'response': "Answer not found as per context"}
 
 if __name__ == '__main__':
     app.run()
