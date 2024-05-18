@@ -1,51 +1,133 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chatbot</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <style>
+        body {
+            background-color: #b6aba4;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        #container {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 80vh;
+        }
+        h1 {
+            text-align: center;
+            background-color: #4d3f32;
+            color: white;
+            margin: 0;
+            padding: 15px 0;
+        }
+        #chat_log {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            border-bottom: 1px solid #ddd;
+        }
+        .message {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 10px;
+            max-width: 75%;
+        }
+        .user-message {
+            background-color: #dcf8c6;
+            align-self: flex-end;
+        }
+        .bot-message {
+            background-color: #f1f0f0;
+            align-self: flex-start;
+        }
+        #chat_form {
+            display: flex;
+            border-top: 1px solid #ddd;
+        }
+        #user_input {
+            flex: 1;
+            border: none;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 0;
+        }
+        #user_input:focus {
+            outline: none;
+        }
+        button[type="submit"] {
+            background-color: #42393b;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 0;
+        }
+        button[type="submit"]:hover {
+            background-color: #45a049;
+        }
+    </style>
     <script>
         $(document).ready(function () {
             $('#chat_form').on('submit', function (event) {
                 event.preventDefault();
                 var userMessage = $('#user_input').val();
                 $('#user_input').val('');
-                if (userMessage !== '') {
+                if (userMessage.trim() !== '') {
                     addMessage('user', userMessage);
                     sendMessage(userMessage);
                 }
             });
+
+            function addMessage(sender, message) {
+                var messageElement = $('<div class="message ' + sender + '-message"></div>').text(message);
+                $('#chat_log').append(messageElement);
+                scrollToBottom();
+            }
+
+            function scrollToBottom() {
+                $('#chat_log').scrollTop($('#chat_log')[0].scrollHeight);
+            }
+
+            function sendMessage(message) {
+                addMessage('bot', 'Bot is typing...');
+                $.ajax({
+                    type: 'POST',
+                    url: '/chat',
+                    data: { user_input: message },
+                    success: function (response) {
+                        $('.bot-message').last().remove();
+                        addMessage('bot', response.response);
+                    },
+                    error: function () {
+                        $('.bot-message').last().remove();
+                        addMessage('bot', 'Sorry, something went wrong.');
+                    }
+                });
+            }
         });
-
-        function addMessage(sender, message) {
-            var messageElement = $('<div class="message ' + sender + '-message"></div>').text(message);
-            $('#chat_log').append(messageElement);
-            scrollToBottom();
-        }
-
-        function scrollToBottom() {
-            $('#chat_log').scrollTop($('#chat_log')[0].scrollHeight);
-        }
-
-        function sendMessage(message) {
-            addMessage('bot', 'Bot...');
-            $.ajax({
-                type: 'POST',
-                url: '/chat',
-                data: { user_input: message },
-                success: function (response) {
-                    addMessage('bot', response.response);
-                }
-            });
-        }
     </script>
 </head>
-<body style="background-color:lightskyblue">
+<body>
     <div id="container">
         <h1>LLM Powered Chatbot</h1>
         <div id="chat_log">
             <div class="message bot-message">
-                <p>LLM Powered Chatbot</p>
+                <p>Welcome to the LLM Powered Chatbot!</p>
             </div>
         </div>
         <form id="chat_form" method="post">
