@@ -27,6 +27,8 @@ llm = HuggingFaceHub(
     huggingfacehub_api_token= hg_key,# Replace with your actual huggingface token
 )
 
+#llm = GPT4All(model=r'C:\Users\91941\.cache\gpt4all\orca-mini-3b-gguf2-q4_0.gguf'), #Replace this path with your model path
+
 # Define your rag chatbot function
 def chat_with_rag(message):
 
