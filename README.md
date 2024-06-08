@@ -18,17 +18,17 @@ key = ''
 hg_key =""
 ```
 ### If you want to deploy mistral LLM locally on your machine for Chatbot, Goto rag_app.py file and open in code editor 
-goto code line 30:
-
-```python
-    llm = GPT4All(model=r'C:\Users\91941\.cache\gpt4all\mistral-7b-openorca.gguf2.Q4_0.gguf'), #Replace this path with your model path
-```
 1. if you want to use opensource LLM mistral 7b through gpt4all
   Run below python file to download gpt4all model locally
 ```python
 Python download_gpt4all_model.py
 ```
-4. then you need to comment existing huggingfacehub llm codeline 18 to 28:
+2. uncomment code line 30 :
+
+```python
+    llm = GPT4All(model=r'C:\Users\91941\.cache\gpt4all\mistral-7b-openorca.gguf2.Q4_0.gguf'), #Replace this path with your model path
+```
+3. Then you need to comment existing huggingfacehub llm codeline 18 to 28:
 ```python
 llm = HuggingFaceHub(
     repo_id="HuggingFaceH4/zephyr-7b-beta",
