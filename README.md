@@ -17,25 +17,31 @@ Update dataprovider.py by add your Hugginging face key and OpenAI key for
 key = ''
 hg_key =""
 ```
-### Choose LLM for Chatbot, Goto advance_rag_app.py file and open in code editor 
-goto code line 68:
+### If you want to deploy mistral LLM locally on your machine for Chatbot, Goto rag_app.py file and open in code editor 
+goto code line 30:
 
 ```python
-index = build_sentence_window_index(
-    [document],
-    #llm=OpenAI(model="gpt-3.5-turbo", temperature=0.1,api_key=key),
-    #llm = GPT4All("mistral-7b-openorca.gguf2.Q4_0.gguf"),
     llm = GPT4All(model=r'C:\Users\91941\.cache\gpt4all\mistral-7b-openorca.gguf2.Q4_0.gguf'), #Replace this path with your model path
-    save_dir="./sentence_index",
-)
 ```
-1. if you want to use OpenAI LLM then uncomment code line 70 and comment 72 line
-2. if you want to use opensource LLM mistral 7b through gpt4all
+1. if you want to use opensource LLM mistral 7b through gpt4all
   Run below python file to download gpt4all model locally
 ```python
 Python download_gpt4all_model.py
 ```
-4. then you need to update path for model in code line 72 as per your machine path
+4. then you need to comment existing huggingfacehub llm codeline 18 to 28:
+```python
+llm = HuggingFaceHub(
+    repo_id="HuggingFaceH4/zephyr-7b-beta",
+    task="text-generation",
+    model_kwargs={
+        "max_new_tokens": 512,
+        "top_k": 30,
+        "temperature": 0.1,
+        "repetition_penalty": 1.03,
+    },
+    huggingfacehub_api_token= hg_key,# Replace with your actual huggingface token
+)
+```
    
    
 
